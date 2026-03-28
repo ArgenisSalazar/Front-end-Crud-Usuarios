@@ -1,6 +1,6 @@
 'use strict';
 
-const API_URL = 'http://localhost:3000/api';
+const API_URL = 'https://tu-api.onrender.com/api';
 
 /* ── Estado de la aplicación ────────────────────────────── */
 const state = {
