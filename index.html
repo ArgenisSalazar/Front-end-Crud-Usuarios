@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Users Manager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+  <div class="app">
+
+    <!-- ── Sidebar ───────────────────────────────────────── -->
+    <aside class="sidebar">
+      <div class="logo">
+        <div class="logo-icon">👤</div>
+        Users Manager
+      </div>
+
+      <nav class="nav">
+        <button class="nav-item active">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          </svg>
+          Usuarios
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <strong>API Status</strong>
+        <span id="api-status-dot"></span>
+        <span id="api-status-text">Verificando...</span>
+      </div>
+    </aside>
+
+    <main class="main">
+
+      <!-- Header -->
+      <div class="page-header">
+        <div>
+          <h1>Gestión de Usuarios</h1>
+          <p>Administra todos los usuarios del sistema</p>
+        </div>
+        <button class="btn btn-primary" id="btn-new-user">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+          Nuevo usuario
+        </button>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats">
+        <div class="stat-card">
+          <div class="stat-label">Total usuarios</div>
+          <div class="stat-value accent" id="stat-total">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Administradores</div>
+          <div class="stat-value success" id="stat-admins">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Usuarios regulares</div>
+          <div class="stat-value warning" id="stat-users">—</div>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <div class="search-wrap">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input type="text" id="search-input" placeholder="Buscar por nombre o email...">
+        </div>
+        <select id="rol-filter">
+          <option value="">Todos los roles</option>
+          <option value="admin">Admin</option>
+          <option value="user">User</option>
+        </select>
+        <button class="btn btn-ghost btn-sm" id="btn-refresh">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <polyline points="23 4 23 10 17 10" />
+            <path d="M20.49 15a9 9 0 1 1-.07-8.35" />
+          </svg>
+          Actualizar
+        </button>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Usuario</th>
+              <th>Rol</th>
+              <th>Creado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="users-tbody">
+            <tr class="loading-row">
+              <td colspan="5">
+                <span class="spinner"></span>Cargando...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pagination">
+          <span id="pagination-info">—</span>
+          <div class="page-btns" id="page-btns"></div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ── Modal Crear / Editar ───────────────────────────── -->
+  <div class="overlay" id="form-overlay">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-header">
+        <h2 id="modal-title">Nuevo usuario</h2>
+        <button class="modal-close" id="btn-close-form" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="form-grid">
+        <div class="form-group full">
+          <label for="f-nombre">Nombre completo</label>
+          <input type="text" id="f-nombre" placeholder="Ej: Ana García" autocomplete="off">
+          <span class="form-error" id="e-nombre"></span>
+        </div>
+        <div class="form-group full">
+          <label for="f-email">Email</label>
+          <input type="email" id="f-email" placeholder="ana@ejemplo.com" autocomplete="off">
+          <span class="form-error" id="e-email"></span>
+        </div>
+        <div class="form-group">
+          <label for="f-password">Contraseña</label>
+          <input type="password" id="f-password" placeholder="Mín. 8 caracteres">
+          <span class="form-hint" id="pw-hint">Mín. 8 chars, 1 mayúscula, 1 número</span>
+          <span class="form-error" id="e-password"></span>
+        </div>
+        <div class="form-group">
+          <label for="f-rol">Rol</label>
+          <select id="f-rol">
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="btn-cancel-form">Cancelar</button>
+        <button class="btn btn-primary" id="btn-save">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Modal Confirmar Eliminar ───────────────────────── -->
+  <div class="overlay" id="confirm-overlay">
+    <div class="modal confirm-modal" role="dialog" aria-modal="true">
+      <div class="modal-header">
+        <h2>Eliminar usuario</h2>
+        <button class="modal-close" id="btn-close-confirm" aria-label="Cerrar">✕</button>
+      </div>
+      <p>¿Estás seguro que deseas eliminar a <strong id="confirm-name"></strong>? Esta acción no se puede deshacer.</p>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="btn-cancel-confirm">Cancelar</button>
+        <button class="btn btn-danger" id="btn-confirm-delete">Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Toast container ───────────────────────────────── -->
+  <div id="toast-container" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>
