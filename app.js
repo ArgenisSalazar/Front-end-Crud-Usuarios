@@ -1,6 +1,6 @@
 'use strict';
 
-const API_URL = 'https://users-crud-api.onrender.com/api';
+const API_URL = 'https://users-crud-api-u3q1.onrender.com';
 
 /* ── Estado de la aplicación ────────────────────────────── */
 const state = {
